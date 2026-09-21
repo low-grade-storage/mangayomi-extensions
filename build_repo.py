@@ -87,7 +87,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": False,
             "sourceCodeUrl": f"{base_raw_url}/manga/asura_scans.js",
             "apiUrl": "https://api.asurascans.com",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "isManga": True,
             "itemType": 0,
             "isFullData": False,
