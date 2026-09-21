@@ -1,4 +1,4 @@
-const mangayomiSources = [{"id":715754020,"name":"Torrentio Universal (Movies / TV / Anime)","lang":"all","baseUrl":"https://torrentio.strem.fun","apiUrl":"https://v3-cinemeta.strem.io","iconUrl":"https://torrentio.strem.fun/images/logo_v1.png","typeSource":"torrent","isManga":false,"itemType":1,"version":"0.1.0","pkgPath":"anime/src/all/torrentio_universal.js","notes":"Universal streaming extension for Movies, TV Series, and Anime powered by Cinemeta catalog and Torrentio torrent/debrid streams."}];
+const mangayomiSources = [{"id":715754020,"name":"Torrentio Universal (Movies / TV / Anime)","lang":"all","baseUrl":"https://torrentio.strem.fun","apiUrl":"https://v3-cinemeta.strem.io","iconUrl":"https://torrentio.strem.fun/images/logo_v1.png","typeSource":"torrent","isManga":false,"itemType":1,"version":"0.0.1","pkgPath":"anime/src/all/torrentio_universal.js","notes":"Universal streaming extension for Movies, TV Series, and Anime powered by Cinemeta catalog and Torrentio torrent/debrid streams."}];
 
 class DefaultExtension extends MProvider {
     constructor() {

@@ -1,4 +1,4 @@
-const mangayomiSources = [{"name":"Annas Archive","lang":"en","baseUrl":"https://annas-archive.is","apiUrl":"","iconUrl":"https://raw.githubusercontent.com/m2k3a/mangayomi-extensions/main/javascript/icon/all.annasarchive.png","typeSource":"single","itemType":2,"version":"0.0.3","appMinVerReq":"0.6.1","dateFormat":"","dateFormatLocale":"","pkgPath":"novel/src/all/annasarchive.js","isNsfw":false,"hasCloudflare":true,"notes":"Downloads EPUB files to read chapters. Use WebView if Cloudflare/DDoS-Guard check is needed."}];
+const mangayomiSources = [{"name":"Annas Archive","lang":"en","baseUrl":"https://annas-archive.is","apiUrl":"","iconUrl":"https://raw.githubusercontent.com/m2k3a/mangayomi-extensions/main/javascript/icon/all.annasarchive.png","typeSource":"single","itemType":2,"version":"0.0.1","appMinVerReq":"0.6.1","dateFormat":"","dateFormatLocale":"","pkgPath":"novel/src/all/annasarchive.js","isNsfw":false,"hasCloudflare":true,"notes":"Downloads EPUB files to read chapters. Use WebView if Cloudflare/DDoS-Guard check is needed."}];
 
 class DefaultExtension extends MProvider {
   getBaseUrl() {

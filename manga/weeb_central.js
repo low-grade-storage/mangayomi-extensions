@@ -1,4 +1,4 @@
-const mangayomiSources = [{"id":693275080,"name":"Weeb Central","lang":"en","baseUrl":"https://weebcentral.com","apiUrl":"","iconUrl":"https://www.google.com/s2/favicons?sz=128&domain=https://weebcentral.com","typeSource":"single","itemType":0,"version":"0.1.1","pkgPath":"manga/src/en/weebcentral.js"}];
+const mangayomiSources = [{"id":693275080,"name":"Weeb Central","lang":"en","baseUrl":"https://weebcentral.com","apiUrl":"","iconUrl":"https://www.google.com/s2/favicons?sz=128&domain=https://weebcentral.com","typeSource":"single","itemType":0,"version":"0.0.1","pkgPath":"manga/src/en/weebcentral.js"}];
 
 class DefaultExtension extends MProvider {
     constructor() { super(); this.client = new Client(); }

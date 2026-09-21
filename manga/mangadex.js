@@ -1,4 +1,4 @@
-const mangayomiSources = [{"id":810342358,"name":"MangaDex","lang":"en","baseUrl":"https://mangadex.org","apiUrl":"https://api.mangadex.org","iconUrl":"https://raw.githubusercontent.com/kodjodevf/mangayomi-extensions/main/javascript/icon/all.mangadex.png","typeSource":"single","itemType":0,"isManga":true,"version":"0.1.5","dateFormat":"","dateFormatLocale":"","pkgPath":"manga/src/en/mangadex.js"}];
+const mangayomiSources = [{"id":810342358,"name":"MangaDex","lang":"en","baseUrl":"https://mangadex.org","apiUrl":"https://api.mangadex.org","iconUrl":"https://raw.githubusercontent.com/kodjodevf/mangayomi-extensions/main/javascript/icon/all.mangadex.png","typeSource":"single","itemType":0,"isManga":true,"version":"0.0.1","dateFormat":"","dateFormatLocale":"","pkgPath":"manga/src/en/mangadex.js"}];
 
 class DefaultExtension extends MProvider {
     constructor() { super(); this.client = new Client(); }

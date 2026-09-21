@@ -1,4 +1,4 @@
-const mangayomiSources = [{"id":371842104,"name":"Atsumaru","lang":"en","baseUrl":"https://atsu.moe","apiUrl":"https://atsu.moe","iconUrl":"https://atsu.moe/favicon.ico","typeSource":"single","itemType":0,"isManga":true,"isNsfw":false,"version":"0.1.2","dateFormat":"","dateFormatLocale":"","pkgPath":"manga/src/en/atsumaru.js"}];
+const mangayomiSources = [{"id":371842104,"name":"Atsumaru","lang":"en","baseUrl":"https://atsu.moe","apiUrl":"https://atsu.moe","iconUrl":"https://atsu.moe/favicon.ico","typeSource":"single","itemType":0,"isManga":true,"isNsfw":false,"version":"0.0.1","dateFormat":"","dateFormatLocale":"","pkgPath":"manga/src/en/atsumaru.js"}];
 
 class DefaultExtension extends MProvider {
     constructor() { super(); this.client = new Client(); this.cdnBase = "https://cdn.atsu.moe"; }

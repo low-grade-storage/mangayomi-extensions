@@ -1,4 +1,4 @@
-const mangayomiSources = [{"id":715754009,"name":"Torrentio Anime (Torrent / Debrid)","lang":"all","baseUrl":"https://torrentio.strem.fun","apiUrl":"","iconUrl":"https://raw.githubusercontent.com/m2k3a/mangayomi-extensions/main/javascript/icon/all.torrentio.png","typeSource":"torrent","isManga":false,"itemType":1,"version":"0.0.3","pkgPath":"anime/src/all/torrentioanime.js"}];
+const mangayomiSources = [{"id":715754009,"name":"Torrentio Anime (Torrent / Debrid)","lang":"all","baseUrl":"https://torrentio.strem.fun","apiUrl":"","iconUrl":"https://raw.githubusercontent.com/m2k3a/mangayomi-extensions/main/javascript/icon/all.torrentio.png","typeSource":"torrent","isManga":false,"itemType":1,"version":"0.0.1","pkgPath":"anime/src/all/torrentioanime.js"}];
 
 class DefaultExtension extends MProvider {
     constructor() { super(); this.client = new Client(); }

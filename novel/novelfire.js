@@ -1,4 +1,4 @@
-const mangayomiSources = [{"name":"NovelFire","lang":"en","baseUrl":"https://novelfire.net","apiUrl":"","iconUrl":"https://m.media-amazon.com/images/I/31957gKv8WL.jpg","typeSource":"single","itemType":2,"version":"0.0.2","pkgPath":"novel/src/en/novelfire.js","notes":""}];
+const mangayomiSources = [{"name":"NovelFire","lang":"en","baseUrl":"https://novelfire.net","apiUrl":"","iconUrl":"https://m.media-amazon.com/images/I/31957gKv8WL.jpg","typeSource":"single","itemType":2,"version":"0.0.1","pkgPath":"novel/src/en/novelfire.js","notes":""}];
 
 class DefaultExtension extends MProvider {
     getHeaders(url) { return { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36" }; }

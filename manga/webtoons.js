@@ -1,4 +1,4 @@
-const mangayomiSources = [{"id":118325925,"name":"Webtoons (Optimized)","lang":"en","langs":["en","fr","id","th","es","zh","de"],"baseUrl":"https://www.webtoons.com","apiUrl":"","iconUrl":"https://upload.wikimedia.org/wikipedia/commons/0/09/Naver_Line_Webtoon_logo.png","typeSource":"single","isManga":true,"isNsfw":false,"version":"0.0.50","dateFormat":"","dateFormatLocale":"","pkgPath":"manga/src/all/webtoons.js"}];
+const mangayomiSources = [{"id":118325925,"name":"Webtoons (Optimized)","lang":"en","langs":["en","fr","id","th","es","zh","de"],"baseUrl":"https://www.webtoons.com","apiUrl":"","iconUrl":"https://upload.wikimedia.org/wikipedia/commons/0/09/Naver_Line_Webtoon_logo.png","typeSource":"single","isManga":true,"isNsfw":false,"version":"0.0.1","dateFormat":"","dateFormatLocale":"","pkgPath":"manga/src/all/webtoons.js"}];
 
 class DefaultExtension extends MProvider {
   headers = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36", "Referer": "https://www.webtoons.com/" };
