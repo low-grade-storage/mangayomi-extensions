@@ -517,15 +517,16 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
     anime_url = f"{base_raw_url}/anime_index.json"
     novel_url = f"{base_raw_url}/novel_index.json"
 
-    mangayomi_uri = (
-        f"mangayomi://add-repo?repo_name={urllib.parse.quote(display_name)}"
-        f"%26repo_url={repo_website}"
-        f"%26manga_url={manga_url}"
-        f"%26anime_url={anime_url}"
-        f"%26novel_url={novel_url}"
-    )
-
-    redirector_link = f"https://intradeus.github.io/http-protocol-redirector?r={mangayomi_uri}"
+    params = {
+        "repo_name": display_name,
+        "repo_url": repo_website,
+        "manga_url": manga_url,
+        "anime_url": anime_url,
+        "novel_url": novel_url
+    }
+    inner_qs = urllib.parse.urlencode(params)
+    mangayomi_uri = f"mangayomi://add-repo?{inner_qs}"
+    redirector_link = f"https://intradeus.github.io/http-protocol-redirector/?r={urllib.parse.quote(mangayomi_uri, safe='')}"
 
     readme_content = f"""# Mangayomi Custom Extensions Repository
 
