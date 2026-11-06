@@ -6,11 +6,48 @@ const mangayomiSources = [{
     "iconUrl": "https://www.wuxiaworld.com/favicon.ico",
     "typeSource": "single",
     "itemType": 2,
-    "version": "0.0.1",
+    "version": "0.0.2",
     "pkgPath": "novel/src/en/wuxiaworld.js",
     "hasCloudflare": true,
     "notes": "Chinese, Korean, and English martial arts and fantasy light novels"
 }];
+
+const b64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+function btoaPolyfill(str) {
+    let out = "";
+    for (let i = 0; i < str.length; i += 3) {
+        const c1 = str.charCodeAt(i);
+        const c2 = i + 1 < str.length ? str.charCodeAt(i + 1) : NaN;
+        const c3 = i + 2 < str.length ? str.charCodeAt(i + 2) : NaN;
+        out += b64chars.charAt(c1 >> 2);
+        out += b64chars.charAt(((c1 & 3) << 4) | (isNaN(c2) ? 0 : (c2 >> 4)));
+        out += isNaN(c2) ? "=" : b64chars.charAt(((c2 & 15) << 2) | (isNaN(c3) ? 0 : (c3 >> 6)));
+        out += isNaN(c3) ? "=" : b64chars.charAt(c3 & 63);
+    }
+    return out;
+}
+
+function atobPolyfill(str) {
+    let out = "";
+    const cleanStr = str.replace(/[^A-Za-z0-9+/=]/g, "");
+    for (let i = 0; i < cleanStr.length; i += 4) {
+        const enc1 = b64chars.indexOf(cleanStr.charAt(i));
+        const enc2 = b64chars.indexOf(cleanStr.charAt(i + 1));
+        const enc3 = b64chars.indexOf(cleanStr.charAt(i + 2));
+        const enc4 = b64chars.indexOf(cleanStr.charAt(i + 3));
+
+        const chr1 = (enc1 << 2) | (enc2 >> 4);
+        const chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+        const chr3 = ((enc3 & 3) << 6) | enc4;
+
+        out += String.fromCharCode(chr1);
+        if (enc3 !== 64 && enc3 !== -1 && cleanStr.charAt(i + 2) !== "=") out += String.fromCharCode(chr2);
+        if (enc4 !== 64 && enc4 !== -1 && cleanStr.charAt(i + 3) !== "=") out += String.fromCharCode(chr3);
+    }
+    return out;
+}
+
 function queryFirst(parent, selectors) {
     for (const sel of selectors) {
         const list = parent.select(sel);
@@ -18,6 +55,7 @@ function queryFirst(parent, selectors) {
     }
     return null;
 }
+
 function encodeVarint(val) {
     const bytes = [];
     while (val > 0x7f) {
@@ -27,6 +65,7 @@ function encodeVarint(val) {
     bytes.push(val);
     return bytes;
 }
+
 function makeGrpcWebTextRequest(novelId) {
     const payloadBytes = [0x08, ...encodeVarint(novelId)];
     const len = payloadBytes.length;
@@ -42,8 +81,9 @@ function makeGrpcWebTextRequest(novelId) {
     for (let i = 0; i < frame.length; i++) {
         bin += String.fromCharCode(frame[i]);
     }
-    return btoa(bin);
+    return typeof btoa === "function" ? btoa(bin) : btoaPolyfill(bin);
 }
+
 function parseVarint(bytes, offset) {
     let res = 0;
     let shift = 0;
@@ -55,6 +95,7 @@ function parseVarint(bytes, offset) {
     }
     return [res, offset];
 }
+
 function decodeProto(bytes) {
     const fields = {};
     let offset = 0;
@@ -63,6 +104,7 @@ function decodeProto(bytes) {
         offset = nextOffset;
         const wireType = key & 7;
         const fieldNum = key >>> 3;
+
         if (wireType === 0) {
             const [val, afterVal] = parseVarint(bytes, offset);
             offset = afterVal;
@@ -84,6 +126,7 @@ function decodeProto(bytes) {
     }
     return fields;
 }
+
 function bytesToString(bytes) {
     let out = "";
     let i = 0;
@@ -102,6 +145,7 @@ function bytesToString(bytes) {
     }
     return out;
 }
+
 function parseGrpcWebTextResponse(base64Text) {
     let dataB64 = base64Text.trim();
     const eqIdx = dataB64.indexOf("=");
@@ -110,7 +154,7 @@ function parseGrpcWebTextResponse(base64Text) {
         while (padEnd < dataB64.length && dataB64[padEnd] === "=") padEnd++;
         dataB64 = dataB64.slice(0, padEnd);
     }
-    const bin = atob(dataB64);
+    const bin = typeof atob === "function" ? atob(dataB64) : atobPolyfill(dataB64);
     const bytes = new Uint8Array(bin.length);
     for (let i = 0; i < bin.length; i++) {
         bytes[i] = bin.charCodeAt(i);
@@ -120,10 +164,15 @@ function parseGrpcWebTextResponse(base64Text) {
     const root = decodeProto(protoBytes);
     const groupItems = root[1] || [];
     const chapters = [];
-    for (const groupBuf of groupItems) {
+
+    for (let gIdx = 0; gIdx < groupItems.length; gIdx++) {
+        const groupBuf = groupItems[gIdx];
         const group = decodeProto(groupBuf);
+        const groupTitle = group[2] ? bytesToString(group[2][0]) : "";
         const chapterItems = group[6] || [];
-        for (const chBuf of chapterItems) {
+
+        for (let cIdx = 0; cIdx < chapterItems.length; cIdx++) {
+            const chBuf = chapterItems[cIdx];
             const ch = decodeProto(chBuf);
             const name = ch[2] ? bytesToString(ch[2][0]) : '';
             const slug = ch[3] ? bytesToString(ch[3][0]) : '';
@@ -134,24 +183,32 @@ function parseGrpcWebTextResponse(base64Text) {
                     dateUpload = (ts[1][0] * 1000).toString();
                 }
             }
+            if (!dateUpload) dateUpload = "1680000000000";
+
             if (name && slug) {
-                chapters.push({ name, slug, dateUpload });
+                chapters.push({
+                    name: groupTitle ? `${groupTitle}: ${name}` : name,
+                    slug: slug,
+                    dateUpload: dateUpload
+                });
             }
         }
     }
     return chapters;
 }
+
 class DefaultExtension extends MProvider {
     getHeaders(url) {
         return {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
             "Referer": `${this.source.baseUrl}/`,
             "Accept": "application/json, text/html, */*"
         };
     }
+
     get supportsLatest() {
         return true;
     }
+
     async getPopular(page) {
         const client = new Client();
         const url = `${this.source.baseUrl}/api/novels`;
@@ -159,6 +216,7 @@ class DefaultExtension extends MProvider {
         if (res.statusCode !== 200) {
             return { list: [], hasNextPage: false };
         }
+
         try {
             const data = JSON.parse(res.body);
             const items = data.items || (Array.isArray(data) ? data : []);
@@ -166,6 +224,7 @@ class DefaultExtension extends MProvider {
             const start = (page - 1) * pageSize;
             const pageItems = items.slice(start, start + pageSize);
             const bookList = [];
+
             for (const item of pageItems) {
                 const name = item.name || item.title || "";
                 const slug = item.slug || item.id || "";
@@ -174,11 +233,13 @@ class DefaultExtension extends MProvider {
                 const imageUrl = item.coverUrl || item.cover || "";
                 bookList.push({ name, link, imageUrl });
             }
+
             return { list: bookList, hasNextPage: start + pageSize < items.length };
         } catch (_) {
             return { list: [], hasNextPage: false };
         }
     }
+
     async getLatestUpdates(page) {
         const client = new Client();
         const url = `${this.source.baseUrl}/api/novels`;
@@ -186,6 +247,7 @@ class DefaultExtension extends MProvider {
         if (res.statusCode !== 200) {
             return { list: [], hasNextPage: false };
         }
+
         try {
             const data = JSON.parse(res.body);
             let items = data.items || (Array.isArray(data) ? data : []);
@@ -194,6 +256,7 @@ class DefaultExtension extends MProvider {
             const start = (page - 1) * pageSize;
             const pageItems = items.slice(start, start + pageSize);
             const bookList = [];
+
             for (const item of pageItems) {
                 const name = item.name || item.title || "";
                 const slug = item.slug || item.id || "";
@@ -202,18 +265,55 @@ class DefaultExtension extends MProvider {
                 const imageUrl = item.coverUrl || item.cover || "";
                 bookList.push({ name, link, imageUrl });
             }
+
             return { list: bookList, hasNextPage: start + pageSize < items.length };
         } catch (_) {
             return { list: [], hasNextPage: false };
         }
     }
+
     async search(query, page, filters) {
         const client = new Client();
-        const url = `${this.source.baseUrl}/api/novels/search?query=${encodeURIComponent(query)}`;
-        const res = await client.get(url, this.getHeaders(url));
-        if (res.statusCode !== 200) {
-            return { list: [], hasNextPage: false };
+        let genreVal = "";
+        if (filters && Array.isArray(filters)) {
+            for (const f of filters) {
+                if (f.type_name === "SelectFilter" && f.name === "Genre" && f.values && f.values[f.state]) {
+                    genreVal = f.values[f.state].value;
+                }
+            }
         }
+
+        if (query && query.trim()) {
+            const url = `${this.source.baseUrl}/api/novels/search?query=${encodeURIComponent(query.trim())}`;
+            const res = await client.get(url, this.getHeaders(url));
+            if (res.statusCode !== 200) {
+                return { list: [], hasNextPage: false };
+            }
+            try {
+                const data = JSON.parse(res.body);
+                const items = data.items || (Array.isArray(data) ? data : []);
+                const bookList = [];
+                for (const item of items) {
+                    const name = item.name || item.title || "";
+                    const slug = item.slug || item.id || "";
+                    if (!name || !slug) continue;
+                    bookList.push({
+                        name: name,
+                        link: `${this.source.baseUrl}/novel/${slug}`,
+                        imageUrl: item.coverUrl || item.cover || ""
+                    });
+                }
+                return { list: bookList, hasNextPage: false };
+            } catch (_) {
+                return { list: [], hasNextPage: false };
+            }
+        }
+
+        let url = `${this.source.baseUrl}/api/novels`;
+        if (genreVal) url += `?genre=${encodeURIComponent(genreVal)}`;
+        const res = await client.get(url, this.getHeaders(url));
+        if (res.statusCode !== 200) return { list: [], hasNextPage: false };
+
         try {
             const data = JSON.parse(res.body);
             const items = data.items || (Array.isArray(data) ? data : []);
@@ -225,55 +325,99 @@ class DefaultExtension extends MProvider {
                 const name = item.name || item.title || "";
                 const slug = item.slug || item.id || "";
                 if (!name || !slug) continue;
-                const link = `${this.source.baseUrl}/novel/${slug}`;
-                const imageUrl = item.coverUrl || item.cover || "";
-                bookList.push({ name, link, imageUrl });
+                bookList.push({
+                    name: name,
+                    link: `${this.source.baseUrl}/novel/${slug}`,
+                    imageUrl: item.coverUrl || item.cover || ""
+                });
             }
             return { list: bookList, hasNextPage: start + pageSize < items.length };
         } catch (_) {
             return { list: [], hasNextPage: false };
         }
     }
+
     async getDetail(url) {
         const client = new Client();
         const res = await client.get(url, this.getHeaders(url));
         if (res.statusCode !== 200) {
             throw new Error(`Failed to load novel details (${res.statusCode})`);
         }
+
         const html = res.body;
         const doc = new Document(html);
+
         const slugMatch = url.match(/\/novel\/([^/?#]+)/);
         const novelSlug = slugMatch ? slugMatch[1] : "";
+
+        // Extract novel state and ID
         let novelId = null;
-        const idMatch = html.match(/"item":\{"id":(\d+)/) || html.match(/"novelId":(\d+)/) || html.match(/"id":(\d+),"name":/);
-        if (idMatch) {
-            novelId = parseInt(idMatch[1]);
-        }
-        const titleEl = queryFirst(doc, ["h1", ".novel-title", "h2"]);
-        const name = titleEl ? titleEl.text.trim() : "Unknown Title";
-        const imgEl = queryFirst(doc, ["img.novel-cover", ".media-left img", "img[src*='cover']"]);
+        let name = "Unknown Title";
         let imageUrl = "";
-        if (imgEl) {
-            imageUrl = imgEl.attr("src") || imgEl.attr("data-src") || "";
-            if (imageUrl.startsWith("//")) imageUrl = "https:" + imageUrl;
-        }
-        const descEl = queryFirst(doc, [".fr-view", ".synopsis", ".novel-body", "div.content"]);
-        const description = descEl ? descEl.text.trim() : "";
-        const authorEl = queryFirst(doc, [".author", "span.author"]);
-        const author = authorEl ? authorEl.text.trim() : "";
+        let description = "";
+        let author = "";
         const genres = [];
-        const genreElems = doc.select(".genres a, .tags a, a[href*='/genre/']");
-        for (const g of genreElems) {
-            const gt = g.text.trim();
-            if (gt && !genres.includes(gt)) genres.push(gt);
+        let status = 0;
+
+        const stateMatch = html.match(/window\.__REACT_QUERY_STATE__\s*=\s*(\{.*?\});\s*(?:<\/script>|\n)/);
+        if (stateMatch) {
+            try {
+                const stateData = JSON.parse(stateMatch[1]);
+                const queries = stateData.queries || [];
+                for (const q of queries) {
+                    const d = q.state?.data;
+                    if (d?.item) {
+                        const item = d.item;
+                        if (item.id) novelId = item.id;
+                        if (item.name) name = item.name;
+                        if (item.coverUrl) imageUrl = item.coverUrl;
+                        if (item.synopsis || item.description) description = item.synopsis || item.description;
+                        if (item.authorName) author = item.authorName;
+                        if (Array.isArray(item.genres)) {
+                            for (const g of item.genres) {
+                                const gn = typeof g === "string" ? g : (g.name || g.title);
+                                if (gn && !genres.includes(gn)) genres.push(gn);
+                            }
+                        }
+                        if (item.status === 0 || item.status === "COMPLETED") status = 1;
+                        break;
+                    }
+                }
+            } catch (_) {}
         }
-        const status = html.toLowerCase().includes('"status":0') || html.toLowerCase().includes("completed") ? 1 : 0;
+
+        if (!novelId) {
+            const idMatch = html.match(/"item":\{"id":(\d+)/) || html.match(/"novelId":(\d+)/) || html.match(/"id":(\d+),"name":/);
+            if (idMatch) novelId = parseInt(idMatch[1]);
+        }
+
+        if (name === "Unknown Title") {
+            const titleEl = queryFirst(doc, ["h1", ".novel-title", "h2"]);
+            if (titleEl) name = titleEl.text.trim();
+        }
+
+        if (!imageUrl) {
+            const imgEl = queryFirst(doc, ["img.novel-cover", ".media-left img", "img[src*='cover']"]);
+            if (imgEl) imageUrl = imgEl.attr("src") || imgEl.attr("data-src") || "";
+        }
+
+        if (!description) {
+            const descEl = queryFirst(doc, [".fr-view", ".synopsis", ".novel-body", "div.content"]);
+            if (descEl) description = descEl.text.trim();
+        }
+
+        if (!author) {
+            const authorEl = queryFirst(doc, [".author", "span.author", "a[href*='/author/']"]);
+            if (authorEl) author = authorEl.text.trim();
+        }
+
         const chapters = [];
+
+        // Query all chapters via Wuxiaworld gRPC-web endpoint
         if (novelId) {
             try {
                 const grpcBody = makeGrpcWebTextRequest(novelId);
                 const grpcHeaders = {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
                     "Content-Type": "application/grpc-web-text",
                     "Accept": "application/grpc-web-text",
                     "Referer": url
@@ -287,31 +431,36 @@ class DefaultExtension extends MProvider {
                             name: ch.name,
                             url: chUrl,
                             dateUpload: ch.dateUpload,
-                            scanlator: ""
+                            scanlator: author || "Wuxiaworld"
                         });
                     }
                 }
             } catch (_) {}
         }
+
+        // Fallback: scan any HTML chapter links if gRPC failed
         if (chapters.length === 0) {
             const chapterLinks = doc.select(".chapter-item a, .chapter-list a, a[href*='/chapter']");
             const seen = new Set();
             for (const a of chapterLinks) {
                 let href = a.attr("href") || "";
                 if (!href || href === "#") continue;
-                if (!href.startsWith("http")) href = `${this.source.baseUrl}${href}`;
+                if (!href.startsWith("http")) href = `${this.source.baseUrl}${href.startsWith("/") ? "" : "/"}${href}`;
                 if (seen.has(href)) continue;
                 seen.add(href);
+
                 const chTitle = a.text.trim();
                 if (!chTitle) continue;
+
                 chapters.push({
                     name: chTitle,
                     url: href,
-                    dateUpload: null,
-                    scanlator: ""
+                    dateUpload: "1680000000000",
+                    scanlator: author || "Wuxiaworld"
                 });
             }
         }
+
         return {
             name,
             link: url,
@@ -323,6 +472,7 @@ class DefaultExtension extends MProvider {
             chapters
         };
     }
+
     async getHtmlContent(name, url) {
         const client = new Client();
         const res = await client.get(url, this.getHeaders(url));
@@ -330,16 +480,20 @@ class DefaultExtension extends MProvider {
             throw new Error(`Failed to load chapter (${res.statusCode})`);
         }
         const doc = new Document(res.body);
+
         const content = queryFirst(doc, ["div.fr-view", "div#chapter-content", "div.chapter-content", ".p-15"]);
         if (content && content.text.trim()) {
             return content.outerHtml;
         }
+
         const paragraphs = doc.select(".fr-view p, #chapter-content p, .chapter-content p");
         if (paragraphs && paragraphs.length > 0) {
             return paragraphs.map(p => p.outerHtml).join("\n");
         }
+
         throw new Error("Empty chapter content or blocked by protection");
     }
+
     async cleanHtmlContent(html) {
         const doc = new Document(html);
         const paragraphs = doc.select("p");
@@ -349,9 +503,28 @@ class DefaultExtension extends MProvider {
             .map(p => p.outerHtml)
             .join("\n");
     }
+
     getFilterList() {
-        return [];
+        return [
+            {
+                type_name: "SelectFilter",
+                name: "Genre",
+                state: 0,
+                values: [
+                    { type_name: "SelectOption", name: "All Genres", value: "" },
+                    { type_name: "SelectOption", name: "Action", value: "Action" },
+                    { type_name: "SelectOption", name: "Adventure", value: "Adventure" },
+                    { type_name: "SelectOption", name: "Fantasy", value: "Fantasy" },
+                    { type_name: "SelectOption", name: "Martial Arts", value: "Martial Arts" },
+                    { type_name: "SelectOption", name: "Xuanhuan", value: "Xuanhuan" },
+                    { type_name: "SelectOption", name: "Xianxia", value: "Xianxia" },
+                    { type_name: "SelectOption", name: "Romance", value: "Romance" },
+                    { type_name: "SelectOption", name: "Sci-fi", value: "Sci-fi" }
+                ]
+            }
+        ];
     }
+
     getSourcePreferences() {
         return [];
     }

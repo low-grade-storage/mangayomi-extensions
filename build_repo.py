@@ -221,7 +221,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": True,
             "sourceCodeUrl": f"{base_raw_url}/novel/annas_archive.js",
             "apiUrl": "",
-            "version": "0.0.1",
+            "version": "0.0.4",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -243,7 +243,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": False,
             "sourceCodeUrl": f"{base_raw_url}/novel/novelfire.js",
             "apiUrl": "",
-            "version": "0.0.3",
+            "version": "0.0.4",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -287,7 +287,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": False,
             "sourceCodeUrl": f"{base_raw_url}/novel/wattpad.js",
             "apiUrl": "",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -309,7 +309,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": True,
             "sourceCodeUrl": f"{base_raw_url}/novel/webnovel.js",
             "apiUrl": "",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -331,7 +331,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": True,
             "sourceCodeUrl": f"{base_raw_url}/novel/wuxiaworld.js",
             "apiUrl": "https://www.wuxiaworld.com/api",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -353,7 +353,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": True,
             "sourceCodeUrl": f"{base_raw_url}/novel/fictionpress.js",
             "apiUrl": "",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -375,7 +375,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": False,
             "sourceCodeUrl": f"{base_raw_url}/novel/project_gutenberg.js",
             "apiUrl": "",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -397,7 +397,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": True,
             "sourceCodeUrl": f"{base_raw_url}/novel/scribble_hub.js",
             "apiUrl": "",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -405,28 +405,6 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "additionalParams": "",
             "sourceCodeLanguage": 1,
             "notes": "Original web novels and stories from Scribble Hub"
-        },
-        {
-            "id": 928173007,
-            "name": "J-Novel Club",
-            "baseUrl": "https://j-novel.club",
-            "lang": "en",
-            "typeSource": "single",
-            "iconUrl": "https://j-novel.club/favicon.ico",
-            "dateFormat": "",
-            "dateFormatLocale": "",
-            "isNsfw": False,
-            "hasCloudflare": True,
-            "sourceCodeUrl": f"{base_raw_url}/novel/j_novel_club.js",
-            "apiUrl": "",
-            "version": "0.0.1",
-            "isManga": False,
-            "itemType": 2,
-            "isFullData": False,
-            "appMinVerReq": "0.5.0",
-            "additionalParams": "",
-            "sourceCodeLanguage": 1,
-            "notes": "Official English translations of Japanese light novels and series"
         },
         {
             "id": 928173008,
@@ -441,7 +419,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": False,
             "sourceCodeUrl": f"{base_raw_url}/novel/standard_ebooks.js",
             "apiUrl": "",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -463,7 +441,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": False,
             "sourceCodeUrl": f"{base_raw_url}/novel/open_library.js",
             "apiUrl": "https://openlibrary.org",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -485,7 +463,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": False,
             "sourceCodeUrl": f"{base_raw_url}/novel/baen_books.js",
             "apiUrl": "",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -579,20 +557,19 @@ If you prefer to add the catalogues manually in Mangayomi (**More -> Settings ->
 - **Webtoons (Optimized)** (v0.0.50)
 - **Weeb Central** (v0.1.1)
 
-### Novel (13)
-- **Annas Archive** (v0.0.3)
-- **Baen Books** (v0.0.1)
-- **Fictionpress** (v0.0.1)
-- **J-Novel Club** (v0.0.1)
-- **NovelFire** (v0.0.3)
-- **Open Library** (v0.0.1)
-- **Project Gutenberg** (v0.0.1)
+### Novel (12)
+- **Annas Archive** (v0.0.4)
+- **Baen Books** (v0.0.2)
+- **Fictionpress** (v0.0.2)
+- **NovelFire** (v0.0.4)
+- **Open Library** (v0.0.2)
+- **Project Gutenberg** (v0.0.2)
 - **Royal Road** (v0.0.1)
-- **Scribble Hub** (v0.0.1)
-- **Standard E-Books** (v0.0.1)
-- **Wattpad** (v0.0.1)
-- **Webnovel** (v0.0.1)
-- **Wuxiaworld** (v0.0.1)
+- **Scribble Hub** (v0.0.2)
+- **Standard E-Books** (v0.0.2)
+- **Wattpad** (v0.0.2)
+- **Webnovel** (v0.0.2)
+- **Wuxiaworld** (v0.0.2)
 """
 
     with open(os.path.join(BASE_DIR, "README.md"), "w", encoding="utf-8") as f:
