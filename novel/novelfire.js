@@ -1,4 +1,4 @@
-const mangayomiSources = [{"name":"NovelFire","lang":"en","baseUrl":"https://novelfire.net","apiUrl":"","iconUrl":"https://m.media-amazon.com/images/I/31957gKv8WL.jpg","typeSource":"single","itemType":2,"version":"0.0.1","pkgPath":"novel/src/en/novelfire.js","notes":""}];
+const mangayomiSources = [{"name":"NovelFire","lang":"en","baseUrl":"https://novelfire.net","apiUrl":"","iconUrl":"https://m.media-amazon.com/images/I/31957gKv8WL.jpg","typeSource":"single","itemType":2,"version":"0.0.3","pkgPath":"novel/src/en/novelfire.js","notes":""}];
 
 class DefaultExtension extends MProvider {
     getHeaders(url) { return { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36" }; }
@@ -27,7 +27,17 @@ class DefaultExtension extends MProvider {
         while (chaptersUrl) {
             const cDoc = new Document((await client.get(chaptersUrl, this.getHeaders(chaptersUrl))).body);
             for (const el of cDoc.select("ul.chapter-list li a")) {
-                chapters.push({ name: el.selectFirst("strong.chapter-title").text.trim(), url: `${url}/chapter-${el.selectFirst("span.chapter-no").text}`, scanlator: "" });
+                let dateUpload = null;
+                const timeEl = el.selectFirst("time.chapter-update") || el.selectFirst("time");
+                if (timeEl) {
+                    const dt = timeEl.attr("datetime");
+                    const ms = dt ? Date.parse(dt.includes("T") ? dt : dt.replace(" ", "T")) : NaN;
+                    dateUpload = !isNaN(ms) ? ms.toString() : null;
+                    if (!dateUpload && timeEl.text) {
+                        try { const p = parseDates([timeEl.text.trim()], "yyyy-MM-dd", "en"); if (p && p[0]) dateUpload = p[0].toString(); } catch (_) {}
+                    }
+                }
+                chapters.push({ name: el.selectFirst("strong.chapter-title").text.trim(), url: `${url}/chapter-${el.selectFirst("span.chapter-no").text}`, dateUpload, scanlator: "" });
             }
             const next = cDoc.selectFirst("ul.pagination li.page-item a[rel='next']")?.attr("href");
             chaptersUrl = (next && next !== "#" && next !== chaptersUrl) ? (next.startsWith('http') ? next : `${this.source.baseUrl}${next}`) : null;

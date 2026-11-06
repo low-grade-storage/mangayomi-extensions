@@ -243,7 +243,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": False,
             "sourceCodeUrl": f"{base_raw_url}/novel/novelfire.js",
             "apiUrl": "",
-            "version": "0.0.1",
+            "version": "0.0.3",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -273,6 +273,226 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "additionalParams": "",
             "sourceCodeLanguage": 0,
             "notes": ""
+        },
+        {
+            "id": 928173001,
+            "name": "Wattpad",
+            "baseUrl": "https://www.wattpad.com",
+            "lang": "en",
+            "typeSource": "single",
+            "iconUrl": "https://www.wattpad.com/favicon.ico",
+            "dateFormat": "",
+            "dateFormatLocale": "",
+            "isNsfw": False,
+            "hasCloudflare": False,
+            "sourceCodeUrl": f"{base_raw_url}/novel/wattpad.js",
+            "apiUrl": "",
+            "version": "0.0.1",
+            "isManga": False,
+            "itemType": 2,
+            "isFullData": False,
+            "appMinVerReq": "0.5.0",
+            "additionalParams": "",
+            "sourceCodeLanguage": 1,
+            "notes": "Wattpad community novel platform"
+        },
+        {
+            "id": 928173002,
+            "name": "Webnovel",
+            "baseUrl": "https://www.webnovel.com",
+            "lang": "en",
+            "typeSource": "single",
+            "iconUrl": "https://www.webnovel.com/favicon.ico",
+            "dateFormat": "",
+            "dateFormatLocale": "",
+            "isNsfw": False,
+            "hasCloudflare": True,
+            "sourceCodeUrl": f"{base_raw_url}/novel/webnovel.js",
+            "apiUrl": "",
+            "version": "0.0.1",
+            "isManga": False,
+            "itemType": 2,
+            "isFullData": False,
+            "appMinVerReq": "0.5.0",
+            "additionalParams": "",
+            "sourceCodeLanguage": 1,
+            "notes": "Full catalog traversal to load and go through every chapter across all volumes for every novel."
+        },
+        {
+            "id": 928173003,
+            "name": "Wuxiaworld",
+            "baseUrl": "https://www.wuxiaworld.com",
+            "lang": "en",
+            "typeSource": "single",
+            "iconUrl": "https://www.wuxiaworld.com/favicon.ico",
+            "dateFormat": "",
+            "dateFormatLocale": "",
+            "isNsfw": False,
+            "hasCloudflare": True,
+            "sourceCodeUrl": f"{base_raw_url}/novel/wuxiaworld.js",
+            "apiUrl": "https://www.wuxiaworld.com/api",
+            "version": "0.0.1",
+            "isManga": False,
+            "itemType": 2,
+            "isFullData": False,
+            "appMinVerReq": "0.5.0",
+            "additionalParams": "",
+            "sourceCodeLanguage": 1,
+            "notes": "Chinese, Korean, and English martial arts and fantasy light novels"
+        },
+        {
+            "id": 928173004,
+            "name": "Fictionpress",
+            "baseUrl": "https://www.fictionpress.com",
+            "lang": "en",
+            "typeSource": "single",
+            "iconUrl": "https://www.fictionpress.com/favicon.ico",
+            "dateFormat": "",
+            "dateFormatLocale": "",
+            "isNsfw": False,
+            "hasCloudflare": True,
+            "sourceCodeUrl": f"{base_raw_url}/novel/fictionpress.js",
+            "apiUrl": "",
+            "version": "0.0.1",
+            "isManga": False,
+            "itemType": 2,
+            "isFullData": False,
+            "appMinVerReq": "0.5.0",
+            "additionalParams": "",
+            "sourceCodeLanguage": 1,
+            "notes": "Original fiction and creative writing community by FanFiction.Net"
+        },
+        {
+            "id": 928173005,
+            "name": "Project Gutenberg",
+            "baseUrl": "https://www.gutenberg.org",
+            "lang": "en",
+            "typeSource": "single",
+            "iconUrl": "https://www.gutenberg.org/favicon.ico",
+            "dateFormat": "",
+            "dateFormatLocale": "",
+            "isNsfw": False,
+            "hasCloudflare": False,
+            "sourceCodeUrl": f"{base_raw_url}/novel/project_gutenberg.js",
+            "apiUrl": "",
+            "version": "0.0.1",
+            "isManga": False,
+            "itemType": 2,
+            "isFullData": False,
+            "appMinVerReq": "0.5.0",
+            "additionalParams": "",
+            "sourceCodeLanguage": 1,
+            "notes": "Free public domain books and literary classics"
+        },
+        {
+            "id": 928173006,
+            "name": "Scribble Hub",
+            "baseUrl": "https://www.scribblehub.com",
+            "lang": "en",
+            "typeSource": "single",
+            "iconUrl": "https://www.scribblehub.com/favicon.ico",
+            "dateFormat": "",
+            "dateFormatLocale": "",
+            "isNsfw": False,
+            "hasCloudflare": True,
+            "sourceCodeUrl": f"{base_raw_url}/novel/scribble_hub.js",
+            "apiUrl": "",
+            "version": "0.0.1",
+            "isManga": False,
+            "itemType": 2,
+            "isFullData": False,
+            "appMinVerReq": "0.5.0",
+            "additionalParams": "",
+            "sourceCodeLanguage": 1,
+            "notes": "Original web novels and stories from Scribble Hub"
+        },
+        {
+            "id": 928173007,
+            "name": "J-Novel Club",
+            "baseUrl": "https://j-novel.club",
+            "lang": "en",
+            "typeSource": "single",
+            "iconUrl": "https://j-novel.club/favicon.ico",
+            "dateFormat": "",
+            "dateFormatLocale": "",
+            "isNsfw": False,
+            "hasCloudflare": True,
+            "sourceCodeUrl": f"{base_raw_url}/novel/j_novel_club.js",
+            "apiUrl": "",
+            "version": "0.0.1",
+            "isManga": False,
+            "itemType": 2,
+            "isFullData": False,
+            "appMinVerReq": "0.5.0",
+            "additionalParams": "",
+            "sourceCodeLanguage": 1,
+            "notes": "Official English translations of Japanese light novels and series"
+        },
+        {
+            "id": 928173008,
+            "name": "Standard E-Books",
+            "baseUrl": "https://standardebooks.org",
+            "lang": "en",
+            "typeSource": "single",
+            "iconUrl": "https://standardebooks.org/favicon.ico",
+            "dateFormat": "",
+            "dateFormatLocale": "",
+            "isNsfw": False,
+            "hasCloudflare": False,
+            "sourceCodeUrl": f"{base_raw_url}/novel/standard_ebooks.js",
+            "apiUrl": "",
+            "version": "0.0.1",
+            "isManga": False,
+            "itemType": 2,
+            "isFullData": False,
+            "appMinVerReq": "0.5.0",
+            "additionalParams": "",
+            "sourceCodeLanguage": 1,
+            "notes": "Free and liberated ebooks, carefully produced for the true book lover"
+        },
+        {
+            "id": 928173009,
+            "name": "Open Library",
+            "baseUrl": "https://openlibrary.org",
+            "lang": "en",
+            "typeSource": "single",
+            "iconUrl": "https://openlibrary.org/favicon.ico",
+            "dateFormat": "",
+            "dateFormatLocale": "",
+            "isNsfw": False,
+            "hasCloudflare": False,
+            "sourceCodeUrl": f"{base_raw_url}/novel/open_library.js",
+            "apiUrl": "https://openlibrary.org",
+            "version": "0.0.1",
+            "isManga": False,
+            "itemType": 2,
+            "isFullData": False,
+            "appMinVerReq": "0.5.0",
+            "additionalParams": "",
+            "sourceCodeLanguage": 1,
+            "notes": "Open, editable library catalog by Internet Archive with millions of book records"
+        },
+        {
+            "id": 928173010,
+            "name": "Baen Books",
+            "baseUrl": "https://www.baen.com",
+            "lang": "en",
+            "typeSource": "single",
+            "iconUrl": "https://www.baen.com/favicon.ico",
+            "dateFormat": "",
+            "dateFormatLocale": "",
+            "isNsfw": False,
+            "hasCloudflare": False,
+            "sourceCodeUrl": f"{base_raw_url}/novel/baen_books.js",
+            "apiUrl": "",
+            "version": "0.0.1",
+            "isManga": False,
+            "itemType": 2,
+            "isFullData": False,
+            "appMinVerReq": "0.5.0",
+            "additionalParams": "",
+            "sourceCodeLanguage": 1,
+            "notes": "Baen Free Library science fiction and fantasy publications"
         }
     ]
 
@@ -299,19 +519,19 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
 
     mangayomi_uri = (
         f"mangayomi://add-repo?repo_name={urllib.parse.quote(display_name)}"
-        f"&repo_url={urllib.parse.quote(repo_website, safe='')}"
-        f"&manga_url={urllib.parse.quote(manga_url, safe='')}"
-        f"&anime_url={urllib.parse.quote(anime_url, safe='')}"
-        f"&novel_url={urllib.parse.quote(novel_url, safe='')}"
+        f"%26repo_url={repo_website}"
+        f"%26manga_url={manga_url}"
+        f"%26anime_url={anime_url}"
+        f"%26novel_url={novel_url}"
     )
 
-    redirector_link = f"https://intradeus.github.io/http-protocol-redirector?r={urllib.parse.quote(mangayomi_uri, safe='')}"
+    redirector_link = f"https://intradeus.github.io/http-protocol-redirector?r={mangayomi_uri}"
 
     readme_content = f"""# Mangayomi Custom Extensions Repository
 
-A unified extension catalogue containing custom anime, manga, and novel extensions for [Mangayomi](https://github.com/kodjodevf/mangayomi).
+A unified extension catalogue containing custom anime, manga, and novel extensions for [Mangayomi](https://github.com/kodjodevf/mangayomi). Includes web novel and light novel readers, manga sources, and anime streaming providers.
 
-## 🚀 1-Click Install
+## 1-Click Install
 
 Click the button below on your phone or PC browser to add the complete repository into Mangayomi:
 
@@ -321,7 +541,7 @@ Click the button below on your phone or PC browser to add the complete repositor
 
 ---
 
-## 📋 Manual Setup
+## Manual Setup
 
 If you prefer to add the catalogues manually in Mangayomi (**More -> Settings -> Browse -> Extension Repositories**):
 
@@ -344,7 +564,7 @@ If you prefer to add the catalogues manually in Mangayomi (**More -> Settings ->
 
 ---
 
-## 📦 Included Extensions
+## Included Extensions
 
 ### Anime (2)
 - **Torrentio Anime (Torrent / Debrid)** (v0.0.3)
@@ -358,10 +578,20 @@ If you prefer to add the catalogues manually in Mangayomi (**More -> Settings ->
 - **Webtoons (Optimized)** (v0.0.50)
 - **Weeb Central** (v0.1.1)
 
-### Novel (3)
+### Novel (13)
 - **Annas Archive** (v0.0.3)
-- **NovelFire** (v0.0.2)
+- **Baen Books** (v0.0.1)
+- **Fictionpress** (v0.0.1)
+- **J-Novel Club** (v0.0.1)
+- **NovelFire** (v0.0.3)
+- **Open Library** (v0.0.1)
+- **Project Gutenberg** (v0.0.1)
 - **Royal Road** (v0.0.1)
+- **Scribble Hub** (v0.0.1)
+- **Standard E-Books** (v0.0.1)
+- **Wattpad** (v0.0.1)
+- **Webnovel** (v0.0.1)
+- **Wuxiaworld** (v0.0.1)
 """
 
     with open(os.path.join(BASE_DIR, "README.md"), "w", encoding="utf-8") as f:
