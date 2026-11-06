@@ -243,7 +243,7 @@ def build(username="low-grade-storage", repo_name="mangayomi-extensions", branch
             "hasCloudflare": False,
             "sourceCodeUrl": f"{base_raw_url}/novel/novelfire.js",
             "apiUrl": "",
-            "version": "0.0.4",
+            "version": "0.0.5",
             "isManga": False,
             "itemType": 2,
             "isFullData": False,
@@ -561,7 +561,7 @@ If you prefer to add the catalogues manually in Mangayomi (**More -> Settings ->
 - **Annas Archive** (v0.0.4)
 - **Baen Books** (v0.0.2)
 - **Fictionpress** (v0.0.2)
-- **NovelFire** (v0.0.4)
+- **NovelFire** (v0.0.5)
 - **Open Library** (v0.0.2)
 - **Project Gutenberg** (v0.0.2)
 - **Royal Road** (v0.0.1)

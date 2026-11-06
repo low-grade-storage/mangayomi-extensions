@@ -6,7 +6,7 @@ const mangayomiSources = [{
     "iconUrl": "https://m.media-amazon.com/images/I/31957gKv8WL.jpg",
     "typeSource": "single",
     "itemType": 2,
-    "version": "0.0.4",
+    "version": "0.0.5",
     "pkgPath": "novel/src/en/novelfire.js",
     "notes": "Shows accurate last updated dates for each chapter."
 }];
@@ -19,7 +19,7 @@ function parseDate(str) {
     const lower = raw.toLowerCase();
     const relMatch = lower.match(/(\d+)\s+(second|sec|minute|min|hour|hr|day|week|month|year)s?\s+ago/);
     if (relMatch) {
-        const val = parseInt(relMatch[1]);
+        const val = parseInt(relMatch[1], 10);
         const unit = relMatch[2];
         let mult = 1000;
         if (unit.startsWith("sec")) mult = 1000;
@@ -40,6 +40,82 @@ function parseDate(str) {
     if (!isNaN(ms)) return ms.toString();
 
     return null;
+}
+
+function decodeEntities(str) {
+    if (!str) return "";
+    return str
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'")
+        .replace(/&rsquo;/g, "’")
+        .replace(/&lsquo;/g, "‘")
+        .replace(/&ldquo;/g, "“")
+        .replace(/&rdquo;/g, "”")
+        .replace(/&nbsp;/g, " ");
+}
+
+function parseChaptersFromHtml(html, baseUrl) {
+    const list = [];
+    const ulMatch = html.match(/<ul[^>]*class=["'][^"']*chapter-list[^"']*["'][^>]*>([\s\S]*?)<\/ul>/i);
+    const content = ulMatch ? ulMatch[1] : html;
+
+    const liRegex = /<li[^>]*>[\s\S]*?<a\s+([^>]*?)>([\s\S]*?)<\/a>[\s\S]*?<\/li>/gi;
+    let match;
+    while ((match = liRegex.exec(content)) !== null) {
+        const aAttrs = match[1];
+        const inner = match[2];
+
+        const hrefMatch = aAttrs.match(/href=["']([^"']+)["']/i);
+        if (!hrefMatch) continue;
+        const rawHref = hrefMatch[1].trim();
+        if (!rawHref || rawHref === "#") continue;
+        const chUrl = rawHref.startsWith("http")
+            ? rawHref
+            : `${baseUrl}${rawHref.startsWith("/") ? "" : "/"}${rawHref}`;
+
+        let title = "";
+        const tMatch = inner.match(/<strong[^>]*class=["'][^"']*chapter-title[^"']*["'][^>]*>([\s\S]*?)<\/strong>/i);
+        if (tMatch) {
+            title = decodeEntities(tMatch[1].replace(/<[^>]+>/g, "").trim());
+        }
+        if (!title) {
+            const attrTitleMatch = aAttrs.match(/title=["']([^"']+)["']/i);
+            if (attrTitleMatch) title = decodeEntities(attrTitleMatch[1].trim());
+        }
+        if (!title) {
+            title = decodeEntities(inner.replace(/<[^>]+>/g, "").trim());
+        }
+
+        const cnoMatch = inner.match(/<span[^>]*class=["'][^"']*chapter-no[^"']*["'][^>]*>([\s\S]*?)<\/span>/i);
+        let cno = cnoMatch ? cnoMatch[1].trim() : "";
+        if (!cno) {
+            const numInHref = chUrl.match(/\/chapter-([^\/?#]+)/i);
+            if (numInHref) cno = numInHref[1];
+        }
+
+        let dateUpload = null;
+        const timeMatch = inner.match(/<time[^>]*datetime=["']([^"']+)["'][^>]*>([\s\S]*?)<\/time>/i);
+        if (timeMatch) {
+            dateUpload = parseDate(timeMatch[1]) || parseDate(timeMatch[2]);
+        }
+        if (!dateUpload) {
+            const timeTagMatch = inner.match(/<time[^>]*>([\s\S]*?)<\/time>/i);
+            if (timeTagMatch) {
+                dateUpload = parseDate(timeTagMatch[1]);
+            }
+        }
+
+        list.push({
+            name: title || (cno ? `Chapter ${cno}` : "Chapter"),
+            url: chUrl,
+            dateUpload: dateUpload,
+            scanlator: cno ? `NovelFire #${cno}` : `NovelFire #${list.length + 1}`
+        });
+    }
+    return list;
 }
 
 function queryFirst(parent, selectors) {
@@ -71,7 +147,7 @@ class DefaultExtension extends MProvider {
             const bookAnchors = book.select("a");
             if (bookAnchors.length === 0) continue;
             const bookAnchor = bookAnchors[0];
-            const bookTitle = bookAnchor.attr("title");
+            const bookTitle = bookAnchor.attr("title") || bookAnchor.text.trim();
             const bookHref = bookAnchor.attr("href");
             if (!bookHref) continue;
             const bookLink = bookHref.startsWith("http") ? bookHref : `${this.source.baseUrl}${bookHref}`;
@@ -99,11 +175,12 @@ class DefaultExtension extends MProvider {
             }
         }
 
-        return { list: bookList, hasNextPage: hasNextPage || bookList.length >= 20 };
+        return { list: bookList, hasNextPage: hasNextPage };
     }
 
     async getPopular(page) {
-        const url = `${this.source.baseUrl}/genre-all/sort-popular/status-all/all-novel?page=${page}`;
+        const baseUrl = this.source.baseUrl;
+        const url = `${baseUrl}/genre-all/sort-popular/status-all/all-novel?page=${page}`;
         return await this.getBooks(url);
     }
 
@@ -112,7 +189,8 @@ class DefaultExtension extends MProvider {
     }
 
     async getLatestUpdates(page) {
-        const url = `${this.source.baseUrl}/latest-release-novels?page=${page}`;
+        const baseUrl = this.source.baseUrl;
+        const url = `${baseUrl}/latest-release-novels?page=${page}`;
         return await this.getBooks(url);
     }
 
@@ -146,7 +224,13 @@ class DefaultExtension extends MProvider {
 
     async getDetail(url) {
         const client = new Client();
-        const res = await client.get(url, this.getHeaders(url));
+        const baseUrl = this.source.baseUrl || "https://novelfire.net";
+        const cleanUrl = url
+            .replace(/\/+$/, "")
+            .replace(/\/chapter-[^\/]+$/, "")
+            .replace(/\/chapters$/, "");
+
+        const res = await client.get(cleanUrl, this.getHeaders(cleanUrl));
         if (res.statusCode !== 200) {
             throw new Error(`Failed to load novel details (${res.statusCode})`);
         }
@@ -172,65 +256,60 @@ class DefaultExtension extends MProvider {
         const statusText = statusEl ? statusEl.text.toLowerCase() : "";
         const status = statusText.includes("ongoing") ? 0 : 1;
 
-        let chaptersUrl = `${url.replace(/\/+$/, "")}/chapters`;
-        const chaptersList = [];
+        const page1Url = `${cleanUrl}/chapters`;
+        const page1Res = await client.get(page1Url, this.getHeaders(page1Url));
+        if (page1Res.statusCode !== 200) {
+            throw new Error(`Failed to load novel chapters (${page1Res.statusCode})`);
+        }
 
-        while (chaptersUrl) {
-            const chaptersRes = await client.get(chaptersUrl, this.getHeaders(chaptersUrl));
-            if (chaptersRes.statusCode !== 200) break;
-            const chaptersDoc = new Document(chaptersRes.body);
+        const page1Html = page1Res.body;
+        const chaptersList = parseChaptersFromHtml(page1Html, baseUrl);
 
-            const chapterElements = chaptersDoc.select("ul.chapter-list li a");
-            for (const element of chapterElements) {
-                const titleEl = queryFirst(element, ["strong.chapter-title"]);
-                const chapterTitle = titleEl ? titleEl.text.trim() : element.text.trim();
+        let totalPages = 1;
+        const statMatch = page1Html.match(/(\d+)\s*Chapters/i);
+        if (statMatch) {
+            totalPages = Math.max(totalPages, Math.ceil(parseInt(statMatch[1], 10) / 100));
+        }
+        const inputMatch = page1Html.match(/id=["']gotochapno["'][^>]*max=["'](\d+)["']/i);
+        if (inputMatch) {
+            totalPages = Math.max(totalPages, Math.ceil(parseInt(inputMatch[1], 10) / 100));
+        }
+        const pageNums = Array.from(page1Html.matchAll(/[?&]page=(\d+)/g)).map(m => parseInt(m[1], 10));
+        if (pageNums.length > 0) {
+            totalPages = Math.max(totalPages, Math.max(...pageNums));
+        }
 
-                const numEl = queryFirst(element, ["span.chapter-no"]);
-                const chapterNum = numEl ? numEl.text.trim() : "";
-                const chapterUrl = chapterNum ? `${url.replace(/\/+$/, "")}/chapter-${chapterNum}` : (element.attr("href") || "");
-
-                // Robust date parsing directly from element HTML attributes or inner text
-                let dateUpload = null;
-                const eleHtml = element.outerHtml;
-                const dtMatch = eleHtml.match(/datetime="([^"]+)"/i);
-                if (dtMatch) {
-                    dateUpload = parseDate(dtMatch[1]);
-                }
-                if (!dateUpload) {
-                    const timeTagMatch = eleHtml.match(/<time[^>]*>(.*?)<\/time>/i);
-                    if (timeTagMatch) {
-                        dateUpload = parseDate(timeTagMatch[1]);
-                    }
-                }
-                if (!dateUpload) {
-                    dateUpload = "1680000000000";
-                }
-
-                chaptersList.push({
-                    name: chapterTitle,
-                    url: chapterUrl.startsWith("http") ? chapterUrl : `${this.source.baseUrl}${chapterUrl}`,
-                    dateUpload: dateUpload,
-                    scanlator: bookAuthor || "NovelFire"
-                });
+        if (totalPages > 1) {
+            const pagesToFetch = [];
+            for (let p = 2; p <= totalPages; p++) {
+                pagesToFetch.push(p);
             }
 
-            const nextButtons = chaptersDoc.select("ul.pagination li.page-item a[rel='next']");
-            if (nextButtons.length > 0) {
-                const nextHref = nextButtons[0].attr("href");
-                if (nextHref && nextHref !== "#" && nextHref !== chaptersUrl) {
-                    chaptersUrl = nextHref.startsWith("http") ? nextHref : `${this.source.baseUrl}${nextHref}`;
-                } else {
-                    chaptersUrl = null;
+            const BATCH_SIZE = 6;
+            for (let i = 0; i < pagesToFetch.length; i += BATCH_SIZE) {
+                const batch = pagesToFetch.slice(i, i + BATCH_SIZE);
+                const batchResults = await Promise.all(
+                    batch.map(async (p) => {
+                        const pUrl = `${cleanUrl}/chapters?page=${p}`;
+                        const r = await client.get(pUrl, this.getHeaders(pUrl));
+                        if (r.statusCode === 200) {
+                            return parseChaptersFromHtml(r.body, baseUrl);
+                        }
+                        return [];
+                    })
+                );
+                for (const chList of batchResults) {
+                    for (const ch of chList) {
+                        chaptersList.push(ch);
+                    }
                 }
-            } else {
-                chaptersUrl = null;
             }
         }
 
         return {
             name: bookTitle,
-            link: url,
-            imageUrl: imgLink.startsWith("http") ? imgLink : `${this.source.baseUrl}${imgLink}`,
+            link: cleanUrl,
+            imageUrl: imgLink.startsWith("http") ? imgLink : `${baseUrl}${imgLink}`,
             description: bookDescription,
             author: bookAuthor,
             genre: bookGenres,
@@ -249,8 +328,8 @@ class DefaultExtension extends MProvider {
 
         let body = res.body;
 
-        // Check for JS redirect to NovelPhoenix
-        const redirMatch = body.match(/window\.location\.href\s*=\s*"([^"]+)"/);
+        // Follow client-side JS redirects (e.g. readnovel.site -> novelphoenix.com)
+        const redirMatch = body.match(/window\.location\.href\s*=\s*["']([^"']+)["']/);
         if (redirMatch) {
             const redirUrl = redirMatch[1].replace(/\\\//g, "/");
             const redirRes = await client.get(redirUrl, this.getHeaders(redirUrl));
@@ -274,11 +353,13 @@ class DefaultExtension extends MProvider {
     }
 
     async cleanHtmlContent(html) {
+        if (!html) return "";
         const doc = new Document(html);
-        const content = queryFirst(doc, ["div#content"]);
+        const content = queryFirst(doc, ["div#content", "div.chapter-content", "article"]);
         if (!content) return html;
 
         const paragraphs = content.select("p");
+        if (!paragraphs || paragraphs.length === 0) return content.outerHtml;
         let cleanedHtml = "";
         for (const p of paragraphs) {
             const pText = p.text;
@@ -287,7 +368,7 @@ class DefaultExtension extends MProvider {
             }
             cleanedHtml += p.outerHtml;
         }
-        return cleanedHtml;
+        return cleanedHtml || content.outerHtml;
     }
 
     getFilterList() {

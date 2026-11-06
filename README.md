@@ -53,7 +53,7 @@ If you prefer to add the catalogues manually in Mangayomi (**More -> Settings ->
 - **Annas Archive** (v0.0.4)
 - **Baen Books** (v0.0.2)
 - **Fictionpress** (v0.0.2)
-- **NovelFire** (v0.0.4)
+- **NovelFire** (v0.0.5)
 - **Open Library** (v0.0.2)
 - **Project Gutenberg** (v0.0.2)
 - **Royal Road** (v0.0.1)
